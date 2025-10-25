@@ -1,3 +1,3 @@
-module ridebooking
+module RideBooking
 
 go 1.24.4

@@ -2,9 +2,18 @@ package pubsub
 
 // Trip initiation
 type TripEvent struct {
-	UserID string
-	Amount float64
-	Driver string
+	UserID   string
+	UserName string
+	Amount   float64
+	Lat      float64
+	Long     float64
+}
+
+type DriverMatchedEvent struct {
+	DriverName string
+	UserName   string
+	Amount     float64
+	ETA        float64
 }
 
 // ask payment detials with amount
