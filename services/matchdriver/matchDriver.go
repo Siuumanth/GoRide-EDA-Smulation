@@ -17,38 +17,42 @@ Calculation of nearest driver:
 
 var drivers *[]utils.Driver = utils.GenerateDriverData()
 
-func MatchDriver(driverEventQueue <-chan events.TripEvent, eventBus chan<- any) {
+func MatchDriver(driverEventQueue <-chan any, eventBus chan<- any) {
 
 	for tripReq := range driverEventQueue {
 		// calculate nearest driver
-		var driverID int
-		var minDist float64 = 100
-		for i, driver := range *drivers {
-			if driver.Status == "busy" {
-				continue
+		switch event := tripReq.(type) {
+		case events.TripEvent:
+			var driverID int
+			var minDist float64 = 100
+			for i, driver := range *drivers {
+				if driver.Status == "busy" {
+					continue
+				}
+				dist := math.Abs(event.Lat-driver.Lat) + math.Abs(event.Long-driver.Long)
+
+				if dist < minDist {
+					driverID = i
+					minDist = dist
+				}
 			}
-			dist := math.Abs(tripReq.Lat-driver.Lat) + math.Abs(tripReq.Long-driver.Long)
 
-			if dist < minDist {
-				driverID = i
-				minDist = dist
+			// dereference first, then index
+			nearestDriver := (*drivers)[driverID]
+			(*drivers)[driverID].Status = "busy"
+
+			eta := minDist
+
+			driverMatchedEvent := events.DriverMatchedEvent{
+				DriverName: nearestDriver.Name,
+				UserName:   event.UserName,
+				Amount:     event.Amount,
+				ETA:        eta,
 			}
+
+			eventBus <- driverMatchedEvent
+
 		}
-
-		// dereference first, then index
-		nearestDriver := (*drivers)[driverID]
-		(*drivers)[driverID].Status = "busy"
-
-		eta := minDist
-
-		driverMatchedEvent := events.DriverMatchedEvent{
-			DriverName: nearestDriver.Name,
-			UserName:   tripReq.UserName,
-			Amount:     tripReq.Amount,
-			ETA:        eta,
-		}
-
-		eventBus <- driverMatchedEvent
-
 	}
+
 }

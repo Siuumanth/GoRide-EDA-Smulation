@@ -11,7 +11,7 @@ this will have:
 
 // Event bus is a goroutine that will run and look for events in the eventChan channel
 // Map will have a string: list of channels of all subcribers
-func eventBus(eventChan <-chan any, pubsub map[string][]chan any) {
+func StartEventBus(eventChan <-chan any, pubsub map[string][]chan any) {
 
 	for event := range eventChan {
 		switch event.(type) {

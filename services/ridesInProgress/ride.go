@@ -16,19 +16,23 @@ func simulateRide() {
 	time.Sleep(time.Duration(sleepTime) * time.Second) // convert to Duration
 }
 
-func RideService(ridesEventQueue <-chan events.DriverMatchedEvent, eventBus chan<- any) {
-	for event := range ridesEventQueue {
+func RideService(ridesEventQueue <-chan any, eventBus chan<- any) {
+	for e := range ridesEventQueue {
+		switch event := e.(type) {
+		case events.DriverMatchedEvent:
 
-		simulateRide()
-		// sending RideCompletedEvent
-		rideEvent := events.RideCompletedEvent{
-			DriverName:  event.DriverName,
-			UserName:    event.UserName,
-			Amount:      event.Amount,
-			Destination: event.Destination,
+			simulateRide()
+			// sending RideCompletedEvent
+			rideEvent := events.RideCompletedEvent{
+				DriverName:  event.DriverName,
+				UserName:    event.UserName,
+				Amount:      event.Amount,
+				Destination: event.Destination,
+			}
+
+			// Ride completed send ride to Event
+			eventBus <- rideEvent
 		}
-
-		// Ride completed send ride to Event
-		eventBus <- rideEvent
 	}
+
 }

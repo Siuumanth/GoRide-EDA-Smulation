@@ -4,7 +4,7 @@ var (
 	UserEventChan          = make(chan any)
 	TripEventChan          = make(chan any)
 	DriverMatchedEventChan = make(chan any)
-	RideCompletedEventChan = make(chan any)
+	RideEventChan          = make(chan any)
 	PaymentAskEventChan    = make(chan any)
 	PaymentEventChan       = make(chan any)
 	NotificationEventChan  = make(chan any)
@@ -16,7 +16,7 @@ func InitPubSub() map[string][]chan any { // map of publisher event → list of 
 	var PubSub = map[string][]chan any{
 		"UserEvent":          {TripEventChan},
 		"TripEvent":          {DriverMatchedEventChan, NotificationEventChan},
-		"DriverMatchedEvent": {RideCompletedEventChan, NotificationEventChan},
+		"DriverMatchedEvent": {RideEventChan, NotificationEventChan},
 		"RideCompletedEvent": {PaymentAskEventChan, NotificationEventChan},
 		"PaymentAskEvent":    {PaymentEventChan},
 		"PaymentEvent":       {NotificationEventChan, TerminationEventChan},
