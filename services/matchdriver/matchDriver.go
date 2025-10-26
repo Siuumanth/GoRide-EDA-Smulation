@@ -1,4 +1,4 @@
-package drivers
+package matchDriverService
 
 import (
 	pubsub "RideBooking/pubsub"
@@ -15,14 +15,19 @@ Calculation of nearest driver:
 - Calc sum of userLat - driverlat and long for all and find minimum
 */
 
-var drivers []utils.Driver = utils.GenerateDriverData()
+var drivers *[]utils.Driver = utils.GenerateDriverData()
 
 func MatchDriver(driverEventQueue <-chan pubsub.TripEvent, eventBus chan<- any) {
-	for userReq := range driverEventQueue {
+
+	for tripReq := range driverEventQueue {
+		// calculate nearest driver
 		var driverID int
 		var minDist float64 = 100
-		for i, driver := range drivers {
-			dist := math.Abs(userReq.Lat-driver.Lat) + math.Abs(userReq.Long-driver.Long)
+		for i, driver := range *drivers {
+			if driver.Status == "busy" {
+				continue
+			}
+			dist := math.Abs(tripReq.Lat-driver.Lat) + math.Abs(tripReq.Long-driver.Long)
 
 			if dist < minDist {
 				driverID = i
@@ -30,13 +35,16 @@ func MatchDriver(driverEventQueue <-chan pubsub.TripEvent, eventBus chan<- any) 
 			}
 		}
 
-		nearestDriver := drivers[driverID]
+		// dereference first, then index
+		nearestDriver := (*drivers)[driverID]
+		(*drivers)[driverID].Status = "busy"
+
 		eta := minDist
 
 		driverMatchedEvent := pubsub.DriverMatchedEvent{
 			DriverName: nearestDriver.Name,
-			UserName:   userReq.UserName,
-			Amount:     userReq.Amount,
+			UserName:   tripReq.UserName,
+			Amount:     tripReq.Amount,
 			ETA:        eta,
 		}
 

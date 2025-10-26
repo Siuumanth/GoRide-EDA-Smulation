@@ -28,7 +28,7 @@ func eventBus(eventChan <-chan any, pubsub map[string][]chan any) {
 			for _, subscriber := range pubsub["PayEvent"] {
 				subscriber <- event
 			}
-		case NotificationEvent:
+		case NotificationDoneEvent:
 			for _, subscriber := range pubsub["NotificationEvent"] {
 				subscriber <- event
 			}

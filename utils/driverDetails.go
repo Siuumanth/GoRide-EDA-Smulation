@@ -6,16 +6,18 @@ type Driver struct {
 	Lat      float64
 	Long     float64
 	Rating   int
+	Status   string
 }
 
-func GenerateDriverData() []Driver {
-	return []Driver{
+func GenerateDriverData() *[]Driver {
+	driverData := []Driver{
 		{
 			DriverID: "001",
 			Name:     "John Doe",
 			Lat:      10.12345,
 			Long:     20.67890,
 			Rating:   5,
+			Status:   "available",
 		},
 		{
 			DriverID: "002",
@@ -23,6 +25,7 @@ func GenerateDriverData() []Driver {
 			Lat:      15.23456,
 			Long:     30.45678,
 			Rating:   4,
+			Status:   "busy",
 		},
 		{
 			DriverID: "003",
@@ -30,6 +33,7 @@ func GenerateDriverData() []Driver {
 			Lat:      20.34567,
 			Long:     40.12345,
 			Rating:   3,
+			Status:   "available",
 		},
 		{
 			DriverID: "004",
@@ -37,6 +41,7 @@ func GenerateDriverData() []Driver {
 			Lat:      25.67890,
 			Long:     50.12345,
 			Rating:   2,
+			Status:   "busy",
 		},
 		{
 			DriverID: "005",
@@ -44,6 +49,7 @@ func GenerateDriverData() []Driver {
 			Lat:      30.23456,
 			Long:     60.45678,
 			Rating:   1,
+			Status:   "available",
 		},
 		{
 			DriverID: "006",
@@ -51,6 +57,25 @@ func GenerateDriverData() []Driver {
 			Lat:      35.34567,
 			Long:     70.67890,
 			Rating:   0,
+			Status:   "available",
+		},
+		{
+			DriverID: "007",
+			Name:     "David Lee",
+			Lat:      40.12345,
+			Long:     80.23456,
+			Rating:   0,
+			Status:   "available",
+		},
+		{
+			DriverID: "008",
+			Name:     "Emily Chen",
+			Lat:      45.67890,
+			Long:     90.34567,
+			Rating:   0,
+			Status:   "available",
 		},
 	}
+	dataLoc := &driverData
+	return dataLoc
 }
