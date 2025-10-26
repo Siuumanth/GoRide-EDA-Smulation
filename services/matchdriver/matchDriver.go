@@ -1,7 +1,7 @@
 package matchDriverService
 
 import (
-	pubsub "RideBooking/pubsub"
+	events "RideBooking/events"
 	utils "RideBooking/utils"
 	"math"
 )
@@ -17,7 +17,7 @@ Calculation of nearest driver:
 
 var drivers *[]utils.Driver = utils.GenerateDriverData()
 
-func MatchDriver(driverEventQueue <-chan pubsub.TripEvent, eventBus chan<- any) {
+func MatchDriver(driverEventQueue <-chan events.TripEvent, eventBus chan<- any) {
 
 	for tripReq := range driverEventQueue {
 		// calculate nearest driver
@@ -41,7 +41,7 @@ func MatchDriver(driverEventQueue <-chan pubsub.TripEvent, eventBus chan<- any) 
 
 		eta := minDist
 
-		driverMatchedEvent := pubsub.DriverMatchedEvent{
+		driverMatchedEvent := events.DriverMatchedEvent{
 			DriverName: nearestDriver.Name,
 			UserName:   tripReq.UserName,
 			Amount:     tripReq.Amount,

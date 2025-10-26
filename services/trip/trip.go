@@ -1,7 +1,7 @@
 package tripService
 
 import (
-	pubsub "RideBooking/pubsub"
+	events "RideBooking/events"
 	"fmt"
 	"log"
 	"math"
@@ -22,7 +22,7 @@ var locationMap = map[string][]float64{
 	"Phoenix":     {33.4484, -112.0739},
 }
 
-func TripService(tripEventQueue <-chan pubsub.UserEvent, eventBus chan<- any) {
+func TripService(tripEventQueue <-chan events.UserEvent, eventBus chan<- any) {
 	// Get user Details
 	for userReq := range tripEventQueue {
 		log.Printf("Hello, %v!", userReq.UserName)
@@ -54,7 +54,7 @@ func TripService(tripEventQueue <-chan pubsub.UserEvent, eventBus chan<- any) {
 		time.Sleep(3 * time.Second)
 
 		// Fire and forget
-		tripEvent := pubsub.TripEvent{
+		tripEvent := events.TripEvent{
 			UserName:    userReq.UserName,
 			Lat:         lat,
 			Long:        long,

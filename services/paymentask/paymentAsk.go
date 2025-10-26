@@ -1,7 +1,7 @@
 package paymentAsk
 
 import (
-	"RideBooking/pubsub"
+	"RideBooking/events"
 	"fmt"
 	"log"
 )
@@ -16,7 +16,7 @@ Ask payment details(card number only)
 func PaymentAskService(PaymentAskEventQueue <-chan any, eventBus chan<- any) {
 	for event := range PaymentAskEventQueue {
 		switch e := event.(type) {
-		case pubsub.DriverMatchedEvent:
+		case events.DriverMatchedEvent:
 			cardNumber := ""
 			fmt.Print("Please enter your card number: ")
 			_, err := fmt.Scanf("%s\n", &cardNumber)
@@ -25,7 +25,7 @@ func PaymentAskService(PaymentAskEventQueue <-chan any, eventBus chan<- any) {
 				log.Fatal(err)
 			}
 
-			eventBus <- pubsub.PaymentAskEvent{
+			eventBus <- events.PaymentAskEvent{
 				CardNumber:  cardNumber,
 				Amount:      e.Amount,
 				Destination: e.Destination,

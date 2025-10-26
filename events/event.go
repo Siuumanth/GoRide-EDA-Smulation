@@ -1,4 +1,4 @@
-package pubsub
+package events
 
 // User initiates trip
 type UserEvent struct {

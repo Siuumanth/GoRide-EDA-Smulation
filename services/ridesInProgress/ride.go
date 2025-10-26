@@ -1,7 +1,7 @@
 package ridesinprogress
 
 import (
-	pubsub "RideBooking/pubsub"
+	events "RideBooking/events"
 	"math/rand"
 	"time"
 )
@@ -16,12 +16,12 @@ func simulateRide() {
 	time.Sleep(time.Duration(sleepTime) * time.Second) // convert to Duration
 }
 
-func RideService(ridesEventQueue <-chan pubsub.DriverMatchedEvent, eventBus chan<- any) {
+func RideService(ridesEventQueue <-chan events.DriverMatchedEvent, eventBus chan<- any) {
 	for event := range ridesEventQueue {
 
 		simulateRide()
 		// sending RideCompletedEvent
-		rideEvent := pubsub.RideCompletedEvent{
+		rideEvent := events.RideCompletedEvent{
 			DriverName:  event.DriverName,
 			UserName:    event.UserName,
 			Amount:      event.Amount,
