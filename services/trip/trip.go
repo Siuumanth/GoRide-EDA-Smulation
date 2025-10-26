@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"time"
 )
 
 /*
@@ -15,11 +14,15 @@ forward event to match driver
 */
 
 var locationMap = map[string][]float64{
-	"New York":    {40.7128, -74.0060},
-	"Los Angeles": {34.0522, -118.2437},
-	"Chicago":     {41.8781, -87.6298},
-	"Houston":     {29.7633, -95.3632},
-	"Phoenix":     {33.4484, -112.0739},
+	"NY":  {40.7128, -74.0060},
+	"LA":  {34.0522, -118.2437},
+	"CH":  {41.8781, -87.6298},
+	"LS":  {29.7633, -95.3632},
+	"AM":  {33.4484, -112.0739},
+	"SF":  {37.7749, -122.4194},
+	"DC":  {38.9072, -77.0369},
+	"BLR": {12.9716, -79.8773},
+	"MUM": {-17.8239, 31.0465},
 }
 
 func TripService(tripEventQueue <-chan any, eventBus chan<- any) {
@@ -53,7 +56,6 @@ func TripService(tripEventQueue <-chan any, eventBus chan<- any) {
 			amount := float64(latDiff + longDiff) // 1 latlong = $1
 
 			fmt.Println("Finding Nearest Driver......")
-			time.Sleep(3 * time.Second)
 
 			// Fire and forget
 			tripEvent := events.TripEvent{

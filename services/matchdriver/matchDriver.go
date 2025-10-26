@@ -3,7 +3,11 @@ package matchDriverService
 import (
 	events "RideBooking/events"
 	utils "RideBooking/utils"
+	"log"
 	"math"
+	"math/rand"
+	"os"
+	"time"
 )
 
 /*
@@ -20,11 +24,12 @@ var drivers *[]utils.Driver = utils.GenerateDriverData()
 func MatchDriver(driverEventQueue <-chan any, eventBus chan<- any) {
 
 	for tripReq := range driverEventQueue {
-		// calculate nearest driver
+		// calculate nearest driverW
 		switch event := tripReq.(type) {
 		case events.TripEvent:
-			var driverID int
-			var minDist float64 = 100
+			time.Sleep(3 * time.Second)
+			var driverID int = -1
+			var minDist float64 = 1000
 			for i, driver := range *drivers {
 				if driver.Status == "busy" {
 					continue
@@ -36,21 +41,28 @@ func MatchDriver(driverEventQueue <-chan any, eventBus chan<- any) {
 					minDist = dist
 				}
 			}
+			if driverID == -1 {
+				log.Println("No driver available")
+				os.Exit(1)
+			}
 
 			// dereference first, then index
 			nearestDriver := (*drivers)[driverID]
 			(*drivers)[driverID].Status = "busy"
 
-			eta := minDist
+			eta := 2 + rand.Intn(3)
 
 			driverMatchedEvent := events.DriverMatchedEvent{
 				DriverName: nearestDriver.Name,
 				UserName:   event.UserName,
 				Amount:     event.Amount,
-				ETA:        eta,
+				ETA:        float64(eta),
 			}
 
 			eventBus <- driverMatchedEvent
+
+		default:
+			log.Printf("MatchDriver Received event of type %T", event)
 
 		}
 	}

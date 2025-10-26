@@ -51,7 +51,7 @@ type NotificationDoneEvent struct {
 	Destination string
 }
 
-type TermniationEvent struct {
+type TerminationEvent struct {
 	UserName  string
 	Status    string
 	EventType string

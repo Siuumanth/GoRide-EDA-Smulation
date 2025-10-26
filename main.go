@@ -1,5 +1,12 @@
 package main
 
+import (
+	events "RideBooking/events"
+	"fmt"
+	"log"
+	"time"
+)
+
 /*
 
    5 Services:
@@ -14,28 +21,28 @@ package main
 
 */
 
-import (
-	events "RideBooking/Events"
-	"fmt"
-	"log"
-)
-
 func main() {
 	eventBus := make(chan any)
 	pubsubs := InitPubSub()
 	// start eventBus
 	go events.StartEventBus(eventBus, pubsubs)
 
+	// start worker pools
+	StartWorkerPools(eventBus)
+	// start user prompt
+	PromptUser(eventBus)
+
+	time.Sleep(200 * time.Second)
 }
 
-func PromptUser() {
+func PromptUser(eventBus chan<- any) {
 	var userName string
-	fmt.Print("Welcome to GoRide, Enter your username: ")
+	fmt.Print("Welcome to GoRide!!\nEnter your username to start your journey: ")
 	_, err := fmt.Scanf("%s\n", &userName)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	//eventBus <- events.UserEvent{UserName: userName, Event: "Starting"}
+	eventBus <- events.UserEvent{UserName: userName}
 }

@@ -13,7 +13,7 @@ func GenerateDriverData() *[]Driver {
 	driverData := []Driver{
 		{
 			DriverID: "001",
-			Name:     "John Doe",
+			Name:     "Dhruv Rathi",
 			Lat:      10.12345,
 			Long:     20.67890,
 			Rating:   5,
@@ -29,7 +29,7 @@ func GenerateDriverData() *[]Driver {
 		},
 		{
 			DriverID: "003",
-			Name:     "Harry Potter",
+			Name:     "Ashith",
 			Lat:      20.34567,
 			Long:     40.12345,
 			Rating:   3,
@@ -45,7 +45,7 @@ func GenerateDriverData() *[]Driver {
 		},
 		{
 			DriverID: "005",
-			Name:     "Alice Johnson",
+			Name:     "Adarsh S H",
 			Lat:      30.23456,
 			Long:     60.45678,
 			Rating:   1,
@@ -53,7 +53,7 @@ func GenerateDriverData() *[]Driver {
 		},
 		{
 			DriverID: "006",
-			Name:     "Michael Brown",
+			Name:     "Sumanth",
 			Lat:      35.34567,
 			Long:     70.67890,
 			Rating:   0,
@@ -61,7 +61,7 @@ func GenerateDriverData() *[]Driver {
 		},
 		{
 			DriverID: "007",
-			Name:     "David Lee",
+			Name:     "Jeethan",
 			Lat:      40.12345,
 			Long:     80.23456,
 			Rating:   0,
@@ -69,7 +69,7 @@ func GenerateDriverData() *[]Driver {
 		},
 		{
 			DriverID: "008",
-			Name:     "Emily Chen",
+			Name:     "Lahari Priya N",
 			Lat:      45.67890,
 			Long:     90.34567,
 			Rating:   0,
