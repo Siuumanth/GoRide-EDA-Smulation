@@ -44,6 +44,7 @@ func handleRideCompletedNotificationEvent(rideCompletedEvent events.RideComplete
 }
 
 func handlePaymentDoneNotificationEvent(paymentDoneEvent events.PaymentEvent, eventBus chan<- any) {
+	fmt.Println("handling payment done noti")
 	if paymentDoneEvent.Status == "fail" {
 		fmt.Printf("NOTIFICATION: Hey %s, your payment of %f has been failed.\n", paymentDoneEvent.UserName, paymentDoneEvent.Amount)
 	} else {

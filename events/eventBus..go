@@ -1,6 +1,7 @@
 package events
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -33,7 +34,8 @@ func StartEventBus(eventChan <-chan any, pubsub map[string][]chan any) {
 			}
 
 		case PaymentEvent:
-			for _, subscriber := range pubsub["PayEvent"] {
+			fmt.Println("PaymentEvent recieved in event bus")
+			for _, subscriber := range pubsub["PaymentEvent"] {
 				subscriber <- event
 			}
 		case NotificationDoneEvent:
