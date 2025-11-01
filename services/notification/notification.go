@@ -45,7 +45,7 @@ func handleRideCompletedNotificationEvent(rideCompletedEvent events.RideComplete
 }
 
 func handlePaymentDoneNotificationEvent(paymentDoneEvent events.PaymentEvent, eventBus chan<- any) {
-	str := fmt.Sprintf("PAYMENT:    %s's payment of %f with transaction ID %s has been %t.\n", paymentDoneEvent.UserName, paymentDoneEvent.Amount, paymentDoneEvent.TransactionID, paymentDoneEvent.Success)
+	str := fmt.Sprintf("PAYMENTCOMPLETED:    %s's payment of %f with transaction ID %s has been %t.\n", paymentDoneEvent.UserName, paymentDoneEvent.Amount, paymentDoneEvent.TransactionID, paymentDoneEvent.Success)
 
 	SaveNotification(str)
 }
