@@ -1,0 +1,31 @@
+2025-11-01T19:50:32+05:30: REQUEST:    user-75635 has requested a trip to AMS for amount: $41.633800.
+2025-11-01T19:50:35+05:30: MATCH:    user-75635, has been matched to a driver driver-765 for a trip to  for amount: $41.633800.
+ETA is 2.000000 seconds
+
+2025-11-01T19:50:36+05:30: RIDECOMPLETED:    user-75635's trip with driver driver-765 to  has been completed for amount: $41.633800.
+
+2025-11-01T19:50:37+05:30: PAYMENT:    user-75635's payment of 41.633800 with transaction ID user-75635- has been true.
+
+2025-11-01T19:50:37+05:30: TRIPCOMPLETED:    user-75635 has completed a trip to  for amount: $0.000000.
+
+2025-11-01T19:53:26+05:30: REQUEST:    user-17244 has requested a trip to MUM for amount: $135.107440.
+2025-11-01T19:53:28+05:30: MATCH:    user-17244, has been matched to a driver driver-425 for a trip to  for amount: $135.107440.
+ETA is 1.000000 seconds
+
+2025-11-01T19:53:29+05:30: RIDECOMPLETED:    user-17244's trip with driver driver-425 to  has been completed for amount: $135.107440.
+
+2025-11-01T19:53:30+05:30: PAYMENT:    user-17244's payment of 135.107440 with transaction ID user-17244- has been true.
+
+2025-11-01T19:53:30+05:30: TRIPCOMPLETED:    user-17244 has completed a trip to  for amount: $0.000000.
+
+2025-11-01T19:56:31+05:30: REQUEST:    user-36324 has requested a trip to HK for amount: $53.061897.
+2025-11-01T19:56:34+05:30: MATCH:    user-36324, has been matched to a driver driver-759 for a trip to  for amount: $53.061897.
+ETA is 2.000000 seconds
+
+2025-11-01T19:56:36+05:30: RIDECOMPLETED:    user-36324's trip with driver driver-759 to  has been completed for amount: $53.061897.
+
+2025-11-01T19:56:37+05:30: PAYMENT:    user-36324's payment of 53.061897 with transaction ID user-36324- has been true.
+
+2025-11-01T19:56:37+05:30: TRIPCOMPLETED:    user-36324 has completed a trip to  for amount: $0.000000.
+
+2025-11-01T19:56:55+05:30: REQUEST:    user-6204 has requested a trip to DC for amount: $67.798058.

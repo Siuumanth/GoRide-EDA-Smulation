@@ -1,10 +1,10 @@
-package terminate
+package tripComplete
 
 import (
 	events "RideBooking/events"
 )
 
-func TerminateService(terminationEventQueue <-chan any, eventBus chan<- any) {
+func TripCompletedService(terminationEventQueue <-chan any, eventBus chan<- any) {
 	for event := range terminationEventQueue {
 		// e has the value as well as type
 		switch e := event.(type) {

@@ -36,6 +36,7 @@ func main() {
 }
 
 func PromptUser(eventBus chan<- any) {
+	time.Sleep(1 * time.Second)
 	userName := fmt.Sprintf("user-%d", rand.Intn(100000))
 
 	lat := rand.Float64() * 100

@@ -1,4 +1,4 @@
-package matchDriverService
+package drivers
 
 import (
 	events "RideBooking/events"

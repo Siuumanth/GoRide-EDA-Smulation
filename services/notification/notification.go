@@ -20,7 +20,7 @@ func NotificationService(NotificationEventQueue <-chan any, eventBus chan<- any)
 		case events.PaymentEvent:
 			handlePaymentDoneNotificationEvent(e, eventBus)
 		case events.TripCompletedEvent:
-			handleTerminationNotificationEvent(e, eventBus)
+			handleTripCompletedNotificationEvent(e, eventBus)
 		default:
 			log.Printf("Notification Service Received event of type %T", e)
 		}
@@ -28,42 +28,29 @@ func NotificationService(NotificationEventQueue <-chan any, eventBus chan<- any)
 	}
 }
 
-func handleTripNotificationEvent(tripEvent events.TripEvent, eventBus chan<- any) {
-	fmt.Printf("NOTIFICATION: Hey %s, you have requested a trip to %s for amount: $%f. We will find you a driver soon.\n", tripEvent.UserName, tripEvent.Destination, tripEvent.Amount)
+func handleTripNotificationEvent(tripEvent events.TripRequestedEvent, eventBus chan<- any) {
+	str := fmt.Sprintf("REQUEST:    %s has requested a trip to %s for amount: $%f.", tripEvent.UserName, tripEvent.Destination, tripEvent.Amount)
+	SaveNotification(str)
 }
-
 func handleDriverMatchedNotificationEvent(driverMatchedEvent events.DriverMatchedEvent, eventBus chan<- any) {
-	fmt.Printf("NOTIFICATION: Hey %s, we have matched you with a driver %s for a trip to %s for amount: $%f.\nETA is %f seconds\n", driverMatchedEvent.UserName, driverMatchedEvent.DriverName, driverMatchedEvent.Destination, driverMatchedEvent.Amount, driverMatchedEvent.ETA)
+	str := fmt.Sprintf("MATCH:    %s, has been matched to a driver %s for a trip to %s for amount: $%f.\nETA is %f seconds\n", driverMatchedEvent.UserName, driverMatchedEvent.DriverName, driverMatchedEvent.Destination, driverMatchedEvent.Amount, driverMatchedEvent.ETA)
 	time.Sleep(time.Duration(driverMatchedEvent.ETA+1) * time.Second)
 
-	fmt.Println("NOTIFICATION: Trip has started.")
+	SaveNotification(str)
 }
-
 func handleRideCompletedNotificationEvent(rideCompletedEvent events.RideCompletedEvent, eventBus chan<- any) {
-	fmt.Printf("NOTIFICATION: Hey %s, your trip with driver %s to %s has been completed for amount: $%f.\n", rideCompletedEvent.UserName, rideCompletedEvent.DriverName, rideCompletedEvent.Destination, rideCompletedEvent.Amount)
+	str := fmt.Sprintf("RIDECOMPLETED:    %s's trip with driver %s to %s has been completed for amount: $%f.\n", rideCompletedEvent.UserName, rideCompletedEvent.DriverName, rideCompletedEvent.Destination, rideCompletedEvent.Amount)
+
+	SaveNotification(str)
 }
 
 func handlePaymentDoneNotificationEvent(paymentDoneEvent events.PaymentEvent, eventBus chan<- any) {
-	fmt.Println("handling payment done noti")
-	if paymentDoneEvent.Status == "fail" {
-		fmt.Printf("NOTIFICATION: Hey %s, your payment of %f has been failed.\n", paymentDoneEvent.UserName, paymentDoneEvent.Amount)
-	} else {
+	str := fmt.Sprintf("PAYMENT:    %s's payment of %f with transaction ID %s has been %t.\n", paymentDoneEvent.UserName, paymentDoneEvent.Amount, paymentDoneEvent.TransactionID, paymentDoneEvent.Success)
 
-		// payment success notification
-		fmt.Printf("NOTIFICATION: Hey %s, your payment of %f with transaction ID %s has been successful.\n", paymentDoneEvent.UserName, paymentDoneEvent.Amount, paymentDoneEvent.TransactionID)
-		// send event to event bus
-	}
-
+	SaveNotification(str)
 }
 
-func handleTerminationNotificationEvent(terminationEvent events.TerminationEvent, eventBus chan<- any) {
-	switch terminationEvent.Status {
-	case "success":
-		fmt.Printf("NOTIFICATION: Trip Successful")
-	case "fail":
-		fmt.Printf("NOTIFICATION: Trip Failed")
-	case "cancel":
-		fmt.Printf("NOTIFICATION: Trip Cancelled")
-	}
-	eventBus <- terminationEvent
+func handleTripCompletedNotificationEvent(tripCompletedEvent events.TripCompletedEvent, eventBus chan<- any) {
+	str := fmt.Sprintf("TRIPCOMPLETED:    %s has completed a trip to %s for amount: $%f.\n", tripCompletedEvent.UserName, tripCompletedEvent.Destination, tripCompletedEvent.Amount)
+	SaveNotification(str)
 }

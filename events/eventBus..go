@@ -16,39 +16,47 @@ func StartEventBus(eventChan <-chan any, pubsub map[string][]chan any) {
 
 	for event := range eventChan {
 		switch event.(type) {
+
 		case UserEvent:
+			fmt.Printf("EventBus Received event of type %T\n", event)
 			for _, subscriber := range pubsub["UserEvent"] {
 				subscriber <- event
 			}
-		case TripEvent:
-			for _, subscriber := range pubsub["TripEvent"] {
+		case TripRequestedEvent:
+			fmt.Printf("EventBus Received event of type %T\n", event)
+			for _, subscriber := range pubsub["TripRequestedEvent"] {
 				subscriber <- event
 			}
 		case DriverMatchedEvent:
+			fmt.Printf("EventBus Received event of type %T\n", event)
 			for _, subscriber := range pubsub["DriverMatchedEvent"] {
 				subscriber <- event
 			}
 		case PaymentAskEvent:
+			fmt.Printf("EventBus Received event of type %T\n", event)
 			for _, subscriber := range pubsub["PaymentAskEvent"] {
 				subscriber <- event
 			}
 
 		case PaymentEvent:
-			fmt.Println("PaymentEvent recieved in event bus")
+			fmt.Printf("EventBus Received event of type %T\n", event)
 			for _, subscriber := range pubsub["PaymentEvent"] {
 				subscriber <- event
 			}
 		case NotificationDoneEvent:
+			fmt.Printf("EventBus Received event of type %T\n", event)
 			for _, subscriber := range pubsub["NotificationEvent"] {
 				subscriber <- event
 			}
 		case RideCompletedEvent:
+			fmt.Printf("EventBus Received event of type %T\n", event)
 			for _, subscriber := range pubsub["RideCompletedEvent"] {
 				subscriber <- event
 			}
 
-		case TerminationEvent:
-			for _, subscriber := range pubsub["TerminationEvent"] {
+		case TripCompletedEvent:
+			fmt.Printf("EventBus Received event of type %T\n", event)
+			for _, subscriber := range pubsub["TripCompletedEvent"] {
 				subscriber <- event
 			}
 
