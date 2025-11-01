@@ -37,7 +37,7 @@ func main() {
 
 func PromptUser(eventBus chan<- any) {
 	var userName string
-	fmt.Print("Welcome to GoRide!!\nEnter your username to start your journey: ")
+	//fmt.Print("Welcome to GoRide!!\nEnter your username to start your journey: ")
 	_, err := fmt.Scanf("%s\n", &userName)
 
 	if err != nil {
