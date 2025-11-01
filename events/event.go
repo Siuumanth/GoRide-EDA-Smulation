@@ -2,11 +2,14 @@ package events
 
 // User initiates trip
 type UserEvent struct {
-	UserName string
+	UserName    string
+	Lat         float64
+	Long        float64
+	Destination string
 }
 
 // Trip initiation
-type TripEvent struct {
+type TripRequestedEvent struct {
 	UserName    string
 	Amount      float64
 	Lat         float64
@@ -35,14 +38,16 @@ type PaymentAskEvent struct {
 	CardNumber  string
 	Destination string
 	UserName    string
+	DriverName  string
 }
 
 type PaymentEvent struct {
 	TransactionID string
-	Status        string
+	Success       bool
 	Destination   string
 	UserName      string
 	Amount        float64
+	DriverName    string
 }
 
 type NotificationDoneEvent struct {
@@ -51,8 +56,15 @@ type NotificationDoneEvent struct {
 	Destination string
 }
 
-type TerminationEvent struct {
-	UserName  string
-	Status    string
-	EventType string
+// type TerminationEvent struct {
+// 	UserName   string
+// 	Status     string
+// 	DriverName string
+// }
+
+type TripCompletedEvent struct {
+	UserName    string
+	DriverName  string
+	Amount      float64
+	Destination string
 }

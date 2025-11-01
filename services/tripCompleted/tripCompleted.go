@@ -15,19 +15,9 @@ func TerminateService(terminationEventQueue <-chan any, eventBus chan<- any) {
 }
 
 func handlePaymentOverEvent(event events.PaymentEvent, eventBus chan<- any) {
-	switch event.Status {
-	case "fail":
-		notificationEvent := events.TerminationEvent{
-			UserName: event.UserName,
-			Status:   "fail",
-		}
-		eventBus <- notificationEvent
-		return
-	case "success":
-		notificationEvent := events.TerminationEvent{
-			UserName: event.UserName,
-			Status:   "success",
-		}
-		eventBus <- notificationEvent
+	tripCompletedEvent := events.TripCompletedEvent{
+		UserName:   event.UserName,
+		DriverName: event.DriverName,
 	}
+	eventBus <- tripCompletedEvent
 }

@@ -3,7 +3,7 @@ package main
 import (
 	events "RideBooking/events"
 	"fmt"
-	"log"
+	"math/rand"
 	"time"
 )
 
@@ -36,13 +36,17 @@ func main() {
 }
 
 func PromptUser(eventBus chan<- any) {
-	var userName string
-	//fmt.Print("Welcome to GoRide!!\nEnter your username to start your journey: ")
-	_, err := fmt.Scanf("%s\n", &userName)
+	userName := fmt.Sprintf("user-%d", rand.Intn(100000))
 
-	if err != nil {
-		log.Fatal(err)
+	lat := rand.Float64() * 100
+	long := rand.Float64() * 100
+	destinations := []string{"BLR", "HK", "NY", "DC", "AMS", "LA", "CH", "LS", "AM", "SF", "MUM"}
+	destination := destinations[rand.Intn(len(destinations))]
+
+	eventBus <- events.UserEvent{
+		UserName:    userName,
+		Lat:         lat,
+		Long:        long,
+		Destination: destination,
 	}
-
-	eventBus <- events.UserEvent{UserName: userName}
 }

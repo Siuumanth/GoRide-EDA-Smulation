@@ -4,6 +4,7 @@ import (
 	"RideBooking/events"
 	"fmt"
 	"log"
+	"math/rand"
 )
 
 /*
@@ -17,16 +18,16 @@ func PaymentAskService(PaymentAskEventQueue <-chan any, eventBus chan<- any) {
 	for event := range PaymentAskEventQueue {
 		switch e := event.(type) {
 		case events.RideCompletedEvent:
-			var cardNumber string
-			cardNumber = "2134"
+			cardNumber := fmt.Sprintf("%04d-%04d-%04d-%04d", rand.Intn(10000), rand.Intn(10000), rand.Intn(10000), rand.Intn(10000))
 
-			fmt.Println("Please enter your card number: ", cardNumber)
-
+			for i := 0; i < 1e5; i++ {
+			}
 			eventBus <- events.PaymentAskEvent{
 				CardNumber:  cardNumber,
 				Amount:      e.Amount,
 				Destination: e.Destination,
 				UserName:    e.UserName,
+				DriverName:  e.DriverName,
 			}
 		default:
 			log.Printf("PaymentAsk Received event of type %T", event)

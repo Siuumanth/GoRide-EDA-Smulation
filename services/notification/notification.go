@@ -11,7 +11,7 @@ func NotificationService(NotificationEventQueue <-chan any, eventBus chan<- any)
 	for event := range NotificationEventQueue {
 		// e has the value as well as type
 		switch e := event.(type) {
-		case events.TripEvent:
+		case events.TripRequestedEvent:
 			handleTripNotificationEvent(e, eventBus)
 		case events.DriverMatchedEvent:
 			handleDriverMatchedNotificationEvent(e, eventBus)
@@ -19,7 +19,7 @@ func NotificationService(NotificationEventQueue <-chan any, eventBus chan<- any)
 			handleRideCompletedNotificationEvent(e, eventBus)
 		case events.PaymentEvent:
 			handlePaymentDoneNotificationEvent(e, eventBus)
-		case events.TerminationEvent:
+		case events.TripCompletedEvent:
 			handleTerminationNotificationEvent(e, eventBus)
 		default:
 			log.Printf("Notification Service Received event of type %T", e)

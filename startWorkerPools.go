@@ -11,7 +11,7 @@ import (
 
 func StartWorkerPools(eventBus chan<- any) {
 	for i := 0; i < 5; i++ {
-		go driverService.MatchDriver(DriverMatchedEventChan, eventBus)
+		go driverService.DriverService(DriverEventChan, eventBus)
 		go tripService.TripService(TripEventChan, eventBus)
 		go paymentAskService.PaymentAskService(PaymentAskEventChan, eventBus)
 		go payService.PaymentService(PaymentEventChan, eventBus)

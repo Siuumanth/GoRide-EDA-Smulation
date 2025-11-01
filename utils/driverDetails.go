@@ -1,81 +1,28 @@
 package utils
 
+import (
+	"fmt"
+	"math/rand/v2"
+)
+
 type Driver struct {
-	DriverID string
-	Name     string
-	Lat      float64
-	Long     float64
-	Rating   int
-	Status   string
+	Name      string
+	Lat       float64
+	Long      float64
+	Available bool
+	Rating    float64
 }
 
-func GenerateDriverData() *[]Driver {
-	driverData := []Driver{
-		{
-			DriverID: "001",
-			Name:     "Dhruv Rathi",
-			Lat:      10.12345,
-			Long:     20.67890,
-			Rating:   5,
-			Status:   "available",
-		},
-		{
-			DriverID: "002",
-			Name:     "Bob Stone",
-			Lat:      15.23456,
-			Long:     30.45678,
-			Rating:   4,
-			Status:   "busy",
-		},
-		{
-			DriverID: "003",
-			Name:     "Ashith",
-			Lat:      20.34567,
-			Long:     40.12345,
-			Rating:   3,
-			Status:   "available",
-		},
-		{
-			DriverID: "004",
-			Name:     "Bob Smith",
-			Lat:      25.67890,
-			Long:     50.12345,
-			Rating:   2,
-			Status:   "busy",
-		},
-		{
-			DriverID: "005",
-			Name:     "Adarsh S H",
-			Lat:      30.23456,
-			Long:     60.45678,
-			Rating:   1,
-			Status:   "available",
-		},
-		{
-			DriverID: "006",
-			Name:     "Sumanth",
-			Lat:      35.34567,
-			Long:     70.67890,
-			Rating:   0,
-			Status:   "available",
-		},
-		{
-			DriverID: "007",
-			Name:     "Jeethan",
-			Lat:      40.12345,
-			Long:     80.23456,
-			Rating:   0,
-			Status:   "available",
-		},
-		{
-			DriverID: "008",
-			Name:     "Lahari Priya N",
-			Lat:      45.67890,
-			Long:     90.34567,
-			Rating:   0,
-			Status:   "available",
-		},
+func GenerateDrivers() *[]Driver {
+	drivers := make([]Driver, 1000)
+	for i := 0; i < 1000; i++ {
+		drivers[i] = Driver{
+			Name:      fmt.Sprintf("driver-%d", i+1),
+			Lat:       rand.Float64()*100 - 50, // random location
+			Long:      rand.Float64()*100 - 50,
+			Available: true,
+			Rating:    3.5 + rand.Float64()*1.5, // rating between 3.5–5.0
+		}
 	}
-	dataLoc := &driverData
-	return dataLoc
+	return &drivers
 }

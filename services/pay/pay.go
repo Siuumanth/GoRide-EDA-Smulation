@@ -18,28 +18,15 @@ func PaymentService(PaymentEventQueue <-chan any, eventBus chan<- any) {
 	for event := range PaymentEventQueue {
 		switch e := event.(type) {
 		case events.PaymentAskEvent:
-			fmt.Printf("Confirm payment of %f to %s? (y/n): ", e.Amount, e.Destination)
-			var confirmation string
-			time.Sleep(500 * time.Millisecond)
-			fmt.Println("y")
-
-			if confirmation == "n" {
-				eventBus <- events.PaymentEvent{
-					Amount:        e.Amount,
-					Destination:   e.Destination,
-					UserName:      e.UserName,
-					TransactionID: "",
-					Status:        "fail",
-				}
-				continue
-			}
+			time.Sleep(1000 * time.Millisecond)
 
 			eventBus <- events.PaymentEvent{
 				Amount:        e.Amount,
 				Destination:   e.Destination,
 				UserName:      e.UserName,
 				TransactionID: fmt.Sprintf("%s-%s", e.UserName, e.Destination),
-				Status:        "success",
+				Success:       true,
+				DriverName:    e.DriverName,
 			}
 		default:
 			log.Printf("Received event of type %T", event)
