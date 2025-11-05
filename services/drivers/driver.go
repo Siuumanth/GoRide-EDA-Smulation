@@ -34,13 +34,7 @@ func DriverService(driverEventQueue <-chan any, eventBus chan<- any) {
 			eventBus <- driverMatchedEvent
 
 		case events.TripCompletedEvent:
-			for i := range *drivers {
-				if (*drivers)[i].Name == event.DriverName {
-					(*drivers)[i].Available = true
-					//	log.Printf("✅ Driver %v is now available again", event.DriverName)
-					break
-				}
-			}
+			releaseDriver(event.DriverName, &mu)
 
 		default:
 			log.Printf("MatchDriver Received event of type %T", event)
