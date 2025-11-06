@@ -18,7 +18,7 @@ const (
 	NUM_DRIVER_SERVICES         = 3
 	NUM_PAYMENT_SERVICES        = 3
 	NUM_PAYMENTASK_SERVICES     = 3
-	NUM_NOTIFICATION_SERVICES   = 8
+	NUM_NOTIFICATION_SERVICES   = 7
 	NUM_RIDES_SERVICES          = 15
 	NUM_TRIP_COMPLETED_SERVICES = 5
 	NUM_TERMINATION_SERVICES    = 1
@@ -38,7 +38,7 @@ func StartWorkerPools(ctx context.Context, eventBus chan<- any) {
 
 // Generic function to start multiple goroutines for a service
 func StartServiceWorkers(eventChan <-chan any, eventBus chan<- any, numWorkers int, service func(<-chan any, chan<- any, context.Context), ctx context.Context) {
-	for i := 0; i < numWorkers; i++ {
+	for range numWorkers {
 		go service(eventChan, eventBus, ctx)
 	}
 }

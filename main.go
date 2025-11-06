@@ -3,6 +3,7 @@ package main
 import (
 	core "RideBooking/core"
 	events "RideBooking/events"
+	"context"
 	"fmt"
 	"math/rand"
 	"time"
@@ -16,6 +17,8 @@ import (
    3. PaymentAskService
    4. PaymentService
    5. NotificationService
+   6. Trip Completed Service
+   7. Termination Serivce
 
    Event bus: goroutine with input channel, map of subscribers and publishers
    Event is in the form of data and publisher
@@ -25,15 +28,18 @@ import (
 func main() {
 	eventBus := make(chan any, 1000) // initial size = 100
 	pubsubs := core.InitPubSub()
-	// start eventBus
-	go events.StartEventBus(eventBus, pubsubs)
 
-	// start worker pools
-	core.InitAutoScaler(eventBus)
-	// start user prompt
-	PromptUser(eventBus)
+	// initiate context for the first goroutine
+	ctx := context.Background()
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 
-	time.Sleep(200 * time.Second)
+	go events.StartEventBus(eventBus, pubsubs)    // start eventBus
+	go core.InitAutoScaler(eventBus, ctx, cancel) // start worker pools, auto scalers
+	go PromptUser(eventBus)                       // start user prompt
+
+	// Waits for cancel Fucntion to be called
+	<-ctx.Done()
 }
 
 func PromptUser(eventBus chan<- any) {

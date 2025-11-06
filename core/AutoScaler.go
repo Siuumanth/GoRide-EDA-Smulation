@@ -3,6 +3,7 @@ package core // AutoScaler
 import (
 	"context"
 	"log"
+	"sync"
 	"time"
 )
 
@@ -15,38 +16,58 @@ const (
 	EVENTBUS_CAPACITY    = 500
 	SCALE_UP_THRESHOLD   = 300
 	SCALE_DOWN_THRESHOLD = 100
+	IDLE_SHUTDOWN_TICKS  = 20
 )
-
-var count int = 0
-
-// array to store active q
-var activeCancels []context.CancelFunc
 
 /*
 Scale up : Add a start worker pools with the fcuntion, and add the context.Cancel() to a list
 Scale down : pop back from that list, and cancel the context
 */
 
-func InitAutoScaler(eventBus chan<- any) {
+var count int = 0
+var scalerMutex sync.Mutex // <-- NEW: Mutex for updated activeCancels
+// array to store active q
+var activeCancels []context.CancelFunc
+
+func InitAutoScaler(eventBus chan<- any, firstctx context.Context, firstCancel context.CancelFunc) {
+	// start worker pools when length is 0
+	activeCancels = append(activeCancels, firstCancel)
+	StartWorkerPools(firstctx, eventBus)
+
+	// Then tick every time to check for increasing
+	var idleTicks int = 0
+
 	ticker := time.NewTicker(200 * time.Millisecond)
 	defer ticker.Stop()
 
 	for range ticker.C {
 		currLoad := len(eventBus)
 
+		// iF zero for a long time, cancel the final goroutine
+		if idleTicks > IDLE_SHUTDOWN_TICKS {
+			scaleDownFunc(eventBus, &activeCancels)
+			return // exit
+		}
+
 		if currLoad > SCALE_UP_THRESHOLD {
 			log.Printf("[AutoScaler] Scaling up: current load %d", currLoad)
 			scaleUpFunc(eventBus, &activeCancels)
+			idleTicks = 0
 		} else if len(activeCancels) == 1 { // if len 1 skip
+			idleTicks++
 			continue
 		} else if currLoad < SCALE_DOWN_THRESHOLD {
 			log.Printf("[AutoScaler] Scaling down: current load %d", currLoad)
+			idleTicks = 0
 			scaleDownFunc(eventBus, &activeCancels)
 		}
 	}
 }
 
 func scaleUpFunc(eventBus chan<- any, activeCancels *[]context.CancelFunc) {
+	scalerMutex.Lock()
+	defer scalerMutex.Unlock()
+
 	// start worker pools
 	ctx, cancel := context.WithCancel(context.Background())
 	*activeCancels = append(*activeCancels, cancel)
@@ -56,8 +77,16 @@ func scaleUpFunc(eventBus chan<- any, activeCancels *[]context.CancelFunc) {
 }
 
 func scaleDownFunc(eventBus chan<- any, activeCancels *[]context.CancelFunc) {
+	scalerMutex.Lock()
+	defer scalerMutex.Unlock()
 
 	last := len(*activeCancels) - 1
+
+	// Safety check: Don't panic if called when empty
+	if last < 0 {
+		return
+	}
+
 	(*activeCancels)[last]() // cancel it
 	*activeCancels = (*activeCancels)[:last]
 
