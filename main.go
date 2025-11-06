@@ -23,13 +23,13 @@ import (
 */
 
 func main() {
-	eventBus := make(chan any)
+	eventBus := make(chan any, 1000) // initial size = 100
 	pubsubs := core.InitPubSub()
 	// start eventBus
 	go events.StartEventBus(eventBus, pubsubs)
 
 	// start worker pools
-	core.StartWorkerPools(eventBus)
+	core.InitAutoScaler(eventBus)
 	// start user prompt
 	PromptUser(eventBus)
 

@@ -2,6 +2,8 @@ package ridesinprogress
 
 import (
 	events "RideBooking/events"
+	"context"
+	"log"
 	"math/rand"
 	"time"
 )
@@ -16,28 +18,38 @@ func simulateRide() {
 	time.Sleep(time.Duration(sleepTime) * time.Second) // convert to Duration
 }
 
-func RideService(ridesEventQueue <-chan any, eventBus chan<- any) {
-	for e := range ridesEventQueue {
-		switch event := e.(type) {
-		case events.DriverMatchedEvent:
-			// end if no river forund
-			if event.DriverName == "" {
-				continue
+func RideService(ridesEventQueue <-chan any, eventBus chan<- any, ctx context.Context) {
+	for {
+		select {
+		case <-ctx.Done():
+			return
+
+		case e, ok := <-ridesEventQueue:
+			if !ok {
+				return // channel closed
 			}
 
-			time.Sleep(time.Duration(event.ETA) * time.Second)
+			switch event := e.(type) {
+			case events.DriverMatchedEvent:
+				// skip if no driver found
+				if event.DriverName == "" {
+					continue
+				}
 
-			simulateRide()
-			// sending RideCompletedEvent
-			rideEvent := events.RideCompletedEvent{
-				DriverName:  event.DriverName,
-				UserName:    event.UserName,
-				Amount:      event.Amount,
-				Destination: event.Destination,
+				time.Sleep(time.Duration(event.ETA) * time.Second)
+				simulateRide()
+
+				rideEvent := events.RideCompletedEvent{
+					DriverName:  event.DriverName,
+					UserName:    event.UserName,
+					Amount:      event.Amount,
+					Destination: event.Destination,
+				}
+
+				eventBus <- rideEvent
+			default:
+				log.Printf("RideService received unknown event type: %T", e)
 			}
-
-			// Ride completed send ride to Event
-			eventBus <- rideEvent
 		}
 	}
 }

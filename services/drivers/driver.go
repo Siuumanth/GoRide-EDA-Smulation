@@ -3,6 +3,7 @@ package drivers
 import (
 	events "RideBooking/events"
 	"RideBooking/utils"
+	"context"
 	"log"
 	"math/rand"
 )
@@ -16,36 +17,41 @@ Calculation of nearest driver:
 - Calc sum of userLat - driverlat and long for all and find minimum
 */
 
-func DriverService(driverEventQueue <-chan any, eventBus chan<- any) {
+func DriverService(driverEventQueue <-chan any, eventBus chan<- any, ctx context.Context) {
+	for {
+		select {
+		case <-ctx.Done():
+			return
 
-	for tripReq := range driverEventQueue {
-		// calculate nearest driverW
-		switch event := tripReq.(type) {
-		case events.TripRequestedEvent:
-			nearestDriver := assignNearestDriver(event, &mu, eventBus)
-			// If no driver found, create an empty driver (TerminationService handles it)
-			if nearestDriver == nil {
-				nearestDriver = &utils.Driver{}
+		case req, ok := <-driverEventQueue:
+			if !ok {
+				return // channel closed
 			}
 
-			eta := 1 + rand.Intn(2)
+			switch event := req.(type) {
+			case events.TripRequestedEvent:
+				// calculate nearest driver
+				nearestDriver := assignNearestDriver(event, &mu, eventBus)
+				if nearestDriver == nil {
+					nearestDriver = &utils.Driver{}
+				}
 
-			driverMatchedEvent := events.DriverMatchedEvent{
-				DriverName: nearestDriver.Name,
-				UserName:   event.UserName,
-				Amount:     event.Amount,
-				ETA:        float64(eta),
+				eta := 1 + rand.Intn(2)
+				driverMatchedEvent := events.DriverMatchedEvent{
+					DriverName: nearestDriver.Name,
+					UserName:   event.UserName,
+					Amount:     event.Amount,
+					ETA:        float64(eta),
+				}
+
+				eventBus <- driverMatchedEvent
+
+			case events.TripCompletedEvent:
+				releaseDriver(event.DriverName, &mu)
+
+			default:
+				log.Printf("MatchDriver Received event of type %T", event)
 			}
-
-			eventBus <- driverMatchedEvent
-
-		case events.TripCompletedEvent:
-			releaseDriver(event.DriverName, &mu)
-
-		default:
-			log.Printf("MatchDriver Received event of type %T", event)
-
 		}
 	}
-
 }
