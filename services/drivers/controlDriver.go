@@ -4,8 +4,8 @@ import (
 	"RideBooking/events"
 	"RideBooking/utils"
 	"math"
-	"os"
 	"sync"
+	"time"
 )
 
 var drivers *[]utils.Driver = utils.GenerateDrivers()
@@ -14,7 +14,7 @@ var mu sync.Mutex
 
 // Mutex for safe updates of driver info
 
-func assignNearestDriver(event events.TripRequestedEvent, mu *sync.Mutex) utils.Driver {
+func assignNearestDriver(event events.TripRequestedEvent, mu *sync.Mutex, eventBus chan<- any) utils.Driver {
 
 	for i := 0; i < 1e5; {
 		i++
@@ -24,24 +24,33 @@ func assignNearestDriver(event events.TripRequestedEvent, mu *sync.Mutex) utils.
 
 	var driver utils.Driver
 	var i int
+	tries := 10
 	// lock mutex
 	mu.Lock()
 	defer mu.Unlock()
 
-	for i, driver = range *drivers {
-		if !driver.Available {
-			continue
-		}
-		dist := math.Abs(event.Lat-driver.Lat) + math.Abs(event.Long-driver.Long)
+	for driverID == -1 && tries != 0 {
+		for i, driver = range *drivers {
+			if !driver.Available {
+				continue
+			}
+			dist := math.Abs(event.Lat-driver.Lat) + math.Abs(event.Long-driver.Long)
 
-		if dist < minDist {
-			driverID = i
-			minDist = dist
+			if dist < minDist {
+				driverID = i
+				minDist = dist
+			}
 		}
+		if driverID == -1 {
+			time.Sleep(500 * time.Millisecond)
+			tries--
+		}
+
 	}
 
+	// If number of tries exhausted, the driver struct will be NULL, and termination service will handle it
 	if driverID == -1 {
-		os.Exit(1)
+		return utils.Driver{}
 	}
 
 	// dereference first, then index

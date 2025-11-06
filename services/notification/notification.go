@@ -21,6 +21,8 @@ func NotificationService(NotificationEventQueue <-chan any, eventBus chan<- any)
 			handlePaymentDoneNotificationEvent(e, eventBus)
 		case events.TripCompletedEvent:
 			handleTripCompletedNotificationEvent(e, eventBus)
+		case events.TerminationEvent:
+			handleTerminationEvent(e, eventBus)
 		default:
 			log.Printf("Notification Service Received event of type %T", e)
 		}
@@ -51,6 +53,14 @@ func handlePaymentDoneNotificationEvent(paymentDoneEvent events.PaymentEvent, ev
 }
 
 func handleTripCompletedNotificationEvent(tripCompletedEvent events.TripCompletedEvent, eventBus chan<- any) {
-	str := fmt.Sprintf("TRIPCOMPLETED:    %s has completed a trip to %s for amount: $%f.\n", tripCompletedEvent.UserName, tripCompletedEvent.Destination, tripCompletedEvent.Amount)
+	str := fmt.Sprintf("TRIPCOMPLETED:    %s has completed a trip to %s for amount: $%f.\n \n \n", tripCompletedEvent.UserName, tripCompletedEvent.Destination, tripCompletedEvent.Amount)
+	SaveNotification(str)
+}
+
+func handleTerminationEvent(terminationEvent events.TerminationEvent, eventBus chan<- any) {
+	if terminationEvent.Message == "success" {
+		return
+	}
+	str := fmt.Sprintf("TERMINATION:    Termination of user %s process. \n MESSAGE:    %s.\n \n \n", terminationEvent.UserName, terminationEvent.Message)
 	SaveNotification(str)
 }

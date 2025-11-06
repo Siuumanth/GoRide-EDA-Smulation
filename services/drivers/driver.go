@@ -21,7 +21,7 @@ func DriverService(driverEventQueue <-chan any, eventBus chan<- any) {
 		// calculate nearest driverW
 		switch event := tripReq.(type) {
 		case events.TripRequestedEvent:
-			nearestDriver := assignNearestDriver(event, &mu)
+			nearestDriver := assignNearestDriver(event, &mu, eventBus)
 			eta := 1 + rand.Intn(2)
 
 			driverMatchedEvent := events.DriverMatchedEvent{

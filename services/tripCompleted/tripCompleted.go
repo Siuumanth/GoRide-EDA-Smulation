@@ -1,4 +1,4 @@
-package tripComplete
+package tripCompleted
 
 import (
 	events "RideBooking/events"

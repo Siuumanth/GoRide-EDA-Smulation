@@ -68,3 +68,9 @@ type TripCompletedEvent struct {
 	Amount      float64
 	Destination string
 }
+
+type TerminationEvent struct {
+	UserName string
+	Status   string
+	Message  string
+}
