@@ -2,6 +2,7 @@ package drivers
 
 import (
 	events "RideBooking/events"
+	"RideBooking/utils"
 	"log"
 	"math/rand"
 )
@@ -22,6 +23,11 @@ func DriverService(driverEventQueue <-chan any, eventBus chan<- any) {
 		switch event := tripReq.(type) {
 		case events.TripRequestedEvent:
 			nearestDriver := assignNearestDriver(event, &mu, eventBus)
+			// If no driver found, create an empty driver (TerminationService handles it)
+			if nearestDriver == nil {
+				nearestDriver = &utils.Driver{}
+			}
+
 			eta := 1 + rand.Intn(2)
 
 			driverMatchedEvent := events.DriverMatchedEvent{

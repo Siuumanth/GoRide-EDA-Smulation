@@ -1,6 +1,7 @@
 package main
 
 import (
+	core "RideBooking/core"
 	events "RideBooking/events"
 	"fmt"
 	"math/rand"
@@ -23,12 +24,12 @@ import (
 
 func main() {
 	eventBus := make(chan any)
-	pubsubs := InitPubSub()
+	pubsubs := core.InitPubSub()
 	// start eventBus
 	go events.StartEventBus(eventBus, pubsubs)
 
 	// start worker pools
-	StartWorkerPools(eventBus)
+	core.StartWorkerPools(eventBus)
 	// start user prompt
 	PromptUser(eventBus)
 

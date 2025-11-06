@@ -1,4 +1,4 @@
-package main
+package core
 
 var n int = 10
 var (
