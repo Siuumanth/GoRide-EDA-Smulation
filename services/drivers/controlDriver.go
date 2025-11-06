@@ -14,7 +14,7 @@ var mu sync.Mutex
 
 // Mutex for safe updates of driver info
 
-func assignNearestDriver(event events.TripRequestedEvent, mu *sync.Mutex, eventBus chan<- any) *utils.Driver {
+func assignNearestDriver(event events.TripRequestedEvent, eventBus chan<- any) *utils.Driver {
 
 	for i := 0; i < 1e5; {
 		i++
@@ -60,7 +60,7 @@ func assignNearestDriver(event events.TripRequestedEvent, mu *sync.Mutex, eventB
 	return nearestDriver // already has pointer to driver
 }
 
-func releaseDriver(driverName string, mu *sync.Mutex) {
+func releaseDriver(driverName string) {
 	mu.Lock()
 	defer mu.Unlock()
 	for i := range *drivers {

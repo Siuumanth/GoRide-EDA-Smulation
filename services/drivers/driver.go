@@ -31,7 +31,7 @@ func DriverService(driverEventQueue <-chan any, eventBus chan<- any, ctx context
 			switch event := req.(type) {
 			case events.TripRequestedEvent:
 				// calculate nearest driver
-				nearestDriver := assignNearestDriver(event, &mu, eventBus)
+				nearestDriver := assignNearestDriver(event, eventBus)
 				if nearestDriver == nil {
 					nearestDriver = &utils.Driver{}
 				}
@@ -47,7 +47,7 @@ func DriverService(driverEventQueue <-chan any, eventBus chan<- any, ctx context
 				eventBus <- driverMatchedEvent
 
 			case events.TripCompletedEvent:
-				releaseDriver(event.DriverName, &mu)
+				releaseDriver(event.DriverName)
 
 			default:
 				log.Printf("MatchDriver Received event of type %T", event)

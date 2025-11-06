@@ -1,6 +1,6 @@
 package core
 
-var n int = 10
+var n int = 50
 var (
 	UserEventChan          = make(chan any, n)
 	TripRequestedEventChan = make(chan any, n)

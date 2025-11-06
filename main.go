@@ -26,7 +26,7 @@ import (
 */
 
 func main() {
-	eventBus := make(chan any, 1000) // initial size = 100
+	eventBus := make(chan any, 500) // initial size = 100
 	pubsubs := core.InitPubSub()
 
 	// initiate context for the first goroutine
