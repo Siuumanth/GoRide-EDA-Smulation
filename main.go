@@ -5,11 +5,12 @@ import (
 	events "RideBooking/events"
 	"context"
 	"fmt"
+	"runtime"
 	"time"
 )
 
 /*
-5 Services:
+7 Services:
 1. Driver Service
 2. Trip Service
 3. PaymentAskService
@@ -21,15 +22,16 @@ import (
 Event bus: goroutine with input channel, map of subscribers and publishers
 Event is in the form of data and publisher
 */
-var NUM_USERS = 10000
+var NUM_USERS = 20000
 var EVENTBUS_CAPACITY = 1000
 
 func main() {
+	runtime.GOMAXPROCS(10)
 	fmt.Println("Starting the system...")
-	eventBus := make(chan any, EVENTBUS_CAPACITY) // initial size = 100
+	eventBus := make(chan any, EVENTBUS_CAPACITY)
 	pubsubs := core.InitPubSub()
 
-	// initiate context for the first goroutine
+	// initiate context for the first Worker Pool
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -40,7 +42,7 @@ func main() {
 	fmt.Println("Simulating Users")
 	go SimulateRandomUsers(eventBus, NUM_USERS) // start user generation
 
-	// Waits for cancel Fucntion to be called
+	// waits for cancel Fucntion to be called
 	<-ctx.Done()
 	fmt.Println("Shutting down the system...")
 

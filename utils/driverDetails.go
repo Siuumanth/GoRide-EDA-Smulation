@@ -5,6 +5,8 @@ import (
 	"math/rand/v2"
 )
 
+var NUM_DRIVERS = 2000
+
 type Driver struct {
 	Name      string
 	Lat       float64
@@ -14,8 +16,8 @@ type Driver struct {
 }
 
 func GenerateDrivers() *[]Driver {
-	drivers := make([]Driver, 1000)
-	for i := 0; i < 1000; i++ {
+	drivers := make([]Driver, NUM_DRIVERS)
+	for i := 0; i < NUM_DRIVERS; i++ {
 		drivers[i] = Driver{
 			Name:      fmt.Sprintf("driver-%d", i+1),
 			Lat:       rand.Float64()*100 - 50, // random location

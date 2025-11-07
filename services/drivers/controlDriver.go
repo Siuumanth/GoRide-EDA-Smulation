@@ -16,8 +16,6 @@ var mu sync.Mutex
 
 func assignNearestDriver(event events.TripRequestedEvent, eventBus chan<- any) *utils.Driver {
 
-	time.Sleep(50 * time.Millisecond)
-
 	var driverID int = -1
 	var minDist float64 = math.MaxFloat64
 
@@ -41,7 +39,7 @@ func assignNearestDriver(event events.TripRequestedEvent, eventBus chan<- any) *
 			}
 		}
 		if driverID == -1 {
-			time.Sleep(50 * time.Millisecond)
+			time.Sleep(5 * time.Millisecond)
 			tries--
 		}
 

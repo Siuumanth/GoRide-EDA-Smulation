@@ -37,7 +37,7 @@ func PaymentAskService(PaymentAskEventQueue <-chan any, eventBus chan<- any, ctx
 					rand.Intn(10000),
 				)
 
-				time.Sleep(50 * time.Millisecond)
+				time.Sleep(5 * time.Millisecond)
 
 				eventBus <- events.PaymentAskEvent{
 					CardNumber:  cardNumber,

@@ -14,7 +14,7 @@ will run as goroutine
 */
 
 func simulateRide() {
-	sleepTime := 1 + rand.Intn(2)                      // int
+	sleepTime := rand.Intn(2)                          // int
 	time.Sleep(time.Duration(sleepTime) * time.Second) // convert to Duration
 }
 
@@ -36,8 +36,8 @@ func RideService(ridesEventQueue <-chan any, eventBus chan<- any, ctx context.Co
 					continue
 				}
 
-				time.Sleep(time.Duration(event.ETA) * time.Second)
-				simulateRide()
+				time.Sleep(50 * time.Millisecond)
+				//	simulateRide()
 
 				rideEvent := events.RideCompletedEvent{
 					DriverName:  event.DriverName,

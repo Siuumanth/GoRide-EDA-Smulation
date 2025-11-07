@@ -46,7 +46,7 @@ func SimulateRandomUsers(eventBus chan<- any, numUsers int) {
 		}
 
 		// sleep random duration between users
-		time.Sleep(time.Duration(rand.Intn(2500)+5000) * time.Microsecond)
+		time.Sleep(time.Duration(rand.Intn(2500)+50) * time.Microsecond)
 	}
 
 	fmt.Println("Users generated.")

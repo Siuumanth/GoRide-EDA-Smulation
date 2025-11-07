@@ -14,7 +14,7 @@ analyses event bus size every 200 ms using time.tick, if the size is close to th
 
 const (
 	EVENTBUS_CAPACITY    = 1000
-	SCALE_UP_THRESHOLD   = 700
+	SCALE_UP_THRESHOLD   = 650
 	SCALE_DOWN_THRESHOLD = 100
 	IDLE_SHUTDOWN_TICKS  = 200
 )
@@ -34,7 +34,7 @@ func InitAutoScaler(eventBus chan<- any, firstctx context.Context, firstCancel c
 	activeCancels = append(activeCancels, firstCancel)
 	StartWorkerPools(firstctx, eventBus)
 
-	// Then tick every time to check for increasing
+	// then tick every time to check for increasing
 	var idleTicks int = 0
 
 	ticker := time.NewTicker(200 * time.Millisecond)
@@ -42,6 +42,7 @@ func InitAutoScaler(eventBus chan<- any, firstctx context.Context, firstCancel c
 
 	for range ticker.C {
 		currLoad := len(eventBus)
+		//	fmt.Printf("Current load is %d \n", currLoad)
 
 		// iF zero for a long time, cancel the final goroutine
 		if idleTicks > IDLE_SHUTDOWN_TICKS {
@@ -50,14 +51,14 @@ func InitAutoScaler(eventBus chan<- any, firstctx context.Context, firstCancel c
 		}
 
 		if currLoad > SCALE_UP_THRESHOLD {
-			log.Printf("[AutoScaler] Scaling up: current load %d, current Count %d", currLoad, count)
+			log.Printf("[AutoScaler] Scaling up: current load %d, Current Worker Pools Count %d", currLoad, count)
 			scaleUpFunc(eventBus, &activeCancels)
 			idleTicks = 0
 		} else if len(activeCancels) == 1 { // if len 1 skip
 			idleTicks++
 			continue
 		} else if currLoad < SCALE_DOWN_THRESHOLD {
-			log.Printf("[AutoScaler] Scaling down: current load %d, current Count %d", currLoad, count)
+			log.Printf("[AutoScaler] Scaling down: current load %d, Current Worker Pools Count %d", currLoad, count)
 			idleTicks = 0
 			scaleDownFunc(&activeCancels)
 		}

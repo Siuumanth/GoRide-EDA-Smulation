@@ -21,7 +21,7 @@ func InitPubSub() map[string][]chan any { // map of publisher event → list of 
 		"DriverMatchedEvent": {RideEventChan, NotificationEventChan, TerminationEventChan},
 		"RideCompletedEvent": {PaymentAskEventChan, NotificationEventChan},
 		"PaymentAskEvent":    {PaymentEventChan},
-		"PaymentEvent":       {NotificationEventChan, TripCompletedEventChan},
+		"PaymentEvent":       {TripCompletedEventChan, NotificationEventChan},
 		"TripCompletedEvent": {DriverEventChan, NotificationEventChan},
 		"TerminationEvent":   {NotificationEventChan},
 	}

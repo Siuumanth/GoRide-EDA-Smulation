@@ -52,7 +52,7 @@ func TripService(tripEventQueue <-chan any, eventBus chan<- any, ctx context.Con
 				amount := latDiff + longDiff
 
 				// simulate amount calculation
-				time.Sleep(10 * time.Millisecond)
+				time.Sleep(1 * time.Millisecond)
 
 				tripEvent := events.TripRequestedEvent{
 					UserName:    event.UserName,

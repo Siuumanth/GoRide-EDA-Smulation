@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
 )
 
 func NotificationService(NotificationEventQueue <-chan any, eventBus chan<- any, ctx context.Context) {
@@ -42,7 +41,7 @@ func handleTripNotificationEvent(tripEvent events.TripRequestedEvent, eventBus c
 }
 func handleDriverMatchedNotificationEvent(driverMatchedEvent events.DriverMatchedEvent, eventBus chan<- any) {
 	str := fmt.Sprintf("MATCH:    %s, has been matched to a driver %s for a trip to %s for amount: $%f.\nETA is %f seconds\n", driverMatchedEvent.UserName, driverMatchedEvent.DriverName, driverMatchedEvent.Destination, driverMatchedEvent.Amount, driverMatchedEvent.ETA)
-	time.Sleep(time.Duration(driverMatchedEvent.ETA+1) * time.Second)
+	//time.Sleep(time.Duration(driverMatchedEvent.ETA+1) * time.Second)
 
 	SaveNotification(str)
 }
