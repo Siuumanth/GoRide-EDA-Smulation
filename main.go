@@ -5,28 +5,28 @@ import (
 	events "RideBooking/events"
 	"context"
 	"fmt"
-	"math/rand"
 	"time"
 )
 
 /*
+5 Services:
+1. Driver Service
+2. Trip Service
+3. PaymentAskService
+4. PaymentService
+5. NotificationService
+6. Trip Completed Service
+7. Termination Serivce
 
-   5 Services:
-   1. Driver Service
-   2. Trip Service
-   3. PaymentAskService
-   4. PaymentService
-   5. NotificationService
-   6. Trip Completed Service
-   7. Termination Serivce
-
-   Event bus: goroutine with input channel, map of subscribers and publishers
-   Event is in the form of data and publisher
-
+Event bus: goroutine with input channel, map of subscribers and publishers
+Event is in the form of data and publisher
 */
+var NUM_USERS = 10000
+var EVENTBUS_CAPACITY = 1000
 
 func main() {
-	eventBus := make(chan any, 500) // initial size = 100
+	fmt.Println("Starting the system...")
+	eventBus := make(chan any, EVENTBUS_CAPACITY) // initial size = 100
 	pubsubs := core.InitPubSub()
 
 	// initiate context for the first goroutine
@@ -36,25 +36,13 @@ func main() {
 
 	go events.StartEventBus(eventBus, pubsubs)    // start eventBus
 	go core.InitAutoScaler(eventBus, ctx, cancel) // start worker pools, auto scalers
-	go PromptUser(eventBus)                       // start user prompt
+
+	fmt.Println("Simulating Users")
+	go SimulateRandomUsers(eventBus, NUM_USERS) // start user generation
 
 	// Waits for cancel Fucntion to be called
 	<-ctx.Done()
-}
+	fmt.Println("Shutting down the system...")
 
-func PromptUser(eventBus chan<- any) {
-	time.Sleep(1 * time.Second)
-	userName := fmt.Sprintf("user-%d", rand.Intn(100000))
-
-	lat := rand.Float64() * 100
-	long := rand.Float64() * 100
-	destinations := []string{"BLR", "HK", "NY", "DC", "AMS", "LA", "CH", "LS", "AM", "SF", "MUM"}
-	destination := destinations[rand.Intn(len(destinations))]
-
-	eventBus <- events.UserEvent{
-		UserName:    userName,
-		Lat:         lat,
-		Long:        long,
-		Destination: destination,
-	}
+	time.Sleep(3 * time.Second)
 }

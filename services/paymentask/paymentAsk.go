@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"time"
 )
 
 /*
@@ -36,8 +37,7 @@ func PaymentAskService(PaymentAskEventQueue <-chan any, eventBus chan<- any, ctx
 					rand.Intn(10000),
 				)
 
-				for i := 0; i < 1e5; i++ {
-				}
+				time.Sleep(50 * time.Millisecond)
 
 				eventBus <- events.PaymentAskEvent{
 					CardNumber:  cardNumber,

@@ -4,6 +4,7 @@ import (
 	events "RideBooking/events"
 	"context"
 	"math"
+	"time"
 )
 
 /*
@@ -51,9 +52,7 @@ func TripService(tripEventQueue <-chan any, eventBus chan<- any, ctx context.Con
 				amount := latDiff + longDiff
 
 				// simulate amount calculation
-				for i := 0; i < 1e4; {
-					i++
-				}
+				time.Sleep(10 * time.Millisecond)
 
 				tripEvent := events.TripRequestedEvent{
 					UserName:    event.UserName,

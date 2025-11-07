@@ -15,6 +15,7 @@ type TripRequestedEvent struct {
 	Lat         float64
 	Long        float64
 	Destination string
+	Status      string
 }
 
 type DriverMatchedEvent struct {

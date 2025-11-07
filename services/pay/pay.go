@@ -26,7 +26,7 @@ func PaymentService(PaymentEventQueue <-chan any, eventBus chan<- any, ctx conte
 			}
 			switch e := event.(type) {
 			case events.PaymentAskEvent:
-				time.Sleep(1000 * time.Millisecond)
+				time.Sleep(100 * time.Millisecond)
 
 				eventBus <- events.PaymentEvent{
 					Amount:        e.Amount,

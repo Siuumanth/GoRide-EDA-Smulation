@@ -13,10 +13,10 @@ analyses event bus size every 200 ms using time.tick, if the size is close to th
 */
 
 const (
-	EVENTBUS_CAPACITY    = 500
-	SCALE_UP_THRESHOLD   = 300
+	EVENTBUS_CAPACITY    = 1000
+	SCALE_UP_THRESHOLD   = 700
 	SCALE_DOWN_THRESHOLD = 100
-	IDLE_SHUTDOWN_TICKS  = 20
+	IDLE_SHUTDOWN_TICKS  = 200
 )
 
 /*
@@ -45,21 +45,21 @@ func InitAutoScaler(eventBus chan<- any, firstctx context.Context, firstCancel c
 
 		// iF zero for a long time, cancel the final goroutine
 		if idleTicks > IDLE_SHUTDOWN_TICKS {
-			scaleDownFunc(eventBus, &activeCancels)
+			scaleDownFunc(&activeCancels)
 			return // exit
 		}
 
 		if currLoad > SCALE_UP_THRESHOLD {
-			log.Printf("[AutoScaler] Scaling up: current load %d", currLoad)
+			log.Printf("[AutoScaler] Scaling up: current load %d, current Count %d", currLoad, count)
 			scaleUpFunc(eventBus, &activeCancels)
 			idleTicks = 0
 		} else if len(activeCancels) == 1 { // if len 1 skip
 			idleTicks++
 			continue
 		} else if currLoad < SCALE_DOWN_THRESHOLD {
-			log.Printf("[AutoScaler] Scaling down: current load %d", currLoad)
+			log.Printf("[AutoScaler] Scaling down: current load %d, current Count %d", currLoad, count)
 			idleTicks = 0
-			scaleDownFunc(eventBus, &activeCancels)
+			scaleDownFunc(&activeCancels)
 		}
 	}
 }
@@ -71,12 +71,11 @@ func scaleUpFunc(eventBus chan<- any, activeCancels *[]context.CancelFunc) {
 	// start worker pools
 	ctx, cancel := context.WithCancel(context.Background())
 	*activeCancels = append(*activeCancels, cancel)
-
 	StartWorkerPools(ctx, eventBus)
 	count++
 }
 
-func scaleDownFunc(eventBus chan<- any, activeCancels *[]context.CancelFunc) {
+func scaleDownFunc(activeCancels *[]context.CancelFunc) {
 	scalerMutex.Lock()
 	defer scalerMutex.Unlock()
 

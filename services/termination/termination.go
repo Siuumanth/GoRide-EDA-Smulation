@@ -28,10 +28,22 @@ func TerminationService(terminationEventQueue <-chan any, eventBus chan<- any, c
 				}
 
 			case events.UserEvent:
-				eventBus <- events.TerminationEvent{
-					UserName: e.UserName,
-					Message:  "User Terminated Process",
-					Status:   "fail",
+				if e.Destination == "" {
+					eventBus <- events.TerminationEvent{
+						UserName: e.UserName,
+						Message:  "User Terminated Process",
+						Status:   "fail",
+					}
+
+				}
+
+			case events.TripRequestedEvent:
+				if e.Status == "fail" {
+					eventBus <- events.TerminationEvent{
+						UserName: e.UserName,
+						Message:  "User Terminated Process",
+						Status:   "fail",
+					}
 				}
 
 			default:

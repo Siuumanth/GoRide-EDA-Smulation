@@ -38,7 +38,8 @@ func StartWorkerPools(ctx context.Context, eventBus chan<- any) {
 
 // Generic function to start multiple goroutines for a service
 func StartServiceWorkers(eventChan <-chan any, eventBus chan<- any, numWorkers int, service func(<-chan any, chan<- any, context.Context), ctx context.Context) {
-	for range numWorkers {
+	//fmt.Printf("Starting %d workers \n", numWorkers)
+	for i := 0; i < numWorkers; i++ {
 		go service(eventChan, eventBus, ctx)
 	}
 }
