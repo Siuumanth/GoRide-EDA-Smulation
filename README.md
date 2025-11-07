@@ -58,7 +58,7 @@ GoRide operates as a **true concurrent system**, composed of **decoupled service
 ### **Run the Simulation**
 
 ```bash
-go run main.go ./core/autoscaler.go ./core/pubsub.go ./core/workers.go ./events/events.go ./events/dispatch.go ./services/...
+go run main.go 
 ```
 
 > 💡 *Depending on your Go version, you may simply run:*
@@ -78,7 +78,7 @@ Example console output:
 
 ```
 [AutoScaler] Scaling up: current load 724, current Count 9
-[AutoScaler] System idle for 4.0s. Triggering global shutdown.
+[AutoScaler] System idle, Triggering global shutdown.
 ```
 
 ---
@@ -90,4 +90,4 @@ It’s a practical exploration of **concurrent system design**, **load managemen
 
 ---
 
-Would you like me to make it sound slightly more *dev-portfolio ready* (like something you’d put on GitHub’s main README with badges and a short tagline)?
+
