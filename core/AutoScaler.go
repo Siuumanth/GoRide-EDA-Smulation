@@ -24,7 +24,6 @@ Scale up : Add a start worker pools with the fcuntion, and add the context.Cance
 Scale down : pop back from that list, and cancel the context
 */
 
-var count int = 0
 var scalerMutex sync.Mutex // <-- NEW: Mutex for updated activeCancels
 // array to store active q
 var activeCancels []context.CancelFunc
@@ -36,14 +35,12 @@ func InitAutoScaler(eventBus chan<- any, firstctx context.Context, firstCancel c
 
 	// then tick every time to check for increasing
 	var idleTicks int = 0
-
 	ticker := time.NewTicker(200 * time.Millisecond)
 	defer ticker.Stop()
 
 	for range ticker.C {
 		currLoad := len(eventBus)
-		//	fmt.Printf("Current load is %d \n", currLoad)
-
+		wplength := len(activeCancels)
 		// iF zero for a long time, cancel the final goroutine
 		if idleTicks > IDLE_SHUTDOWN_TICKS {
 			scaleDownFunc(&activeCancels)
@@ -51,16 +48,25 @@ func InitAutoScaler(eventBus chan<- any, firstctx context.Context, firstCancel c
 		}
 
 		if currLoad > SCALE_UP_THRESHOLD {
-			log.Printf("[AutoScaler] Scaling up: current load %d, Current Worker Pools Count %d", currLoad, count)
+			log.Printf("[AutoScaler] Scaling up: current load %d, Current Worker Pools Count %d", currLoad, wplength)
 			scaleUpFunc(eventBus, &activeCancels)
 			idleTicks = 0
-		} else if len(activeCancels) == 1 { // if len 1 skip
-			idleTicks++
-			continue
-		} else if currLoad < SCALE_DOWN_THRESHOLD {
-			log.Printf("[AutoScaler] Scaling down: current load %d, Current Worker Pools Count %d", currLoad, count)
+		} else if currLoad < SCALE_DOWN_THRESHOLD && wplength > 1 {
+			log.Printf("[AutoScaler] Scaling down: current load %d, Current Worker Pools Count %d", currLoad, wplength)
 			idleTicks = 0
 			scaleDownFunc(&activeCancels)
+		} else if len(activeCancels) == 1 {
+
+			if currLoad == 0 {
+				idleTicks++ // increment if load is 0
+			} else {
+				idleTicks = 0 // reset if load present
+			}
+			if idleTicks > IDLE_SHUTDOWN_TICKS {
+				log.Printf("[AutoScaler] Idle shutdown: load is 0 for %d ticks. Exiting.", idleTicks)
+				scaleDownFunc(&activeCancels)
+				return
+			}
 		}
 	}
 }
@@ -73,7 +79,6 @@ func scaleUpFunc(eventBus chan<- any, activeCancels *[]context.CancelFunc) {
 	ctx, cancel := context.WithCancel(context.Background())
 	*activeCancels = append(*activeCancels, cancel)
 	StartWorkerPools(ctx, eventBus)
-	count++
 }
 
 func scaleDownFunc(activeCancels *[]context.CancelFunc) {
@@ -90,5 +95,4 @@ func scaleDownFunc(activeCancels *[]context.CancelFunc) {
 	(*activeCancels)[last]() // cancel it
 	*activeCancels = (*activeCancels)[:last]
 
-	count--
 }
