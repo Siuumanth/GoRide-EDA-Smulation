@@ -9,6 +9,8 @@ It implements a fully **in-memory Event-Driven Architecture (EDA)** where servic
 
 ## 🚀 **Architecture & Core Principles**
 
+![](https://github.com/Siuumanth/GoRide-EDA-Smulation/blob/main/images/1.jpg?raw=true)
+
 GoRide operates as a **true concurrent system**, composed of **decoupled service workers** coordinated by a dynamic control plane.
 
 ### **Key Components**
@@ -17,10 +19,41 @@ GoRide operates as a **true concurrent system**, composed of **decoupled service
   The central event router responsible for distributing events (e.g., `TripRequestedEvent`, `PaymentEvent`) from publishers to all subscribed services.
 
 * **⚙️ Service Workers (`services/`)**
-  Independent, concurrent components — **Driver**, **Trip**, **Payment**, and **Notification** — each running as separate goroutines handling domain-specific logic.
+  Independent, concurrent components — **Driver**, **Trip**, **Payment**, **PaymentAsk**, **Notification** and **TripCompleted** — each running as separate goroutines handling domain-specific logic.
 
 * **📈 AutoScaler (`core/AutoScaler`)**
   A custom-built load manager that dynamically scales worker pools up or down based on EventBus queue size and system activity.
+
+---
+
+## Project Structure:
+
+```bash
+goride/
+├── go.mod
+├── go.sum
+│
+├── main.go               # Entry point: Initializes EventBus, AutoScaler, and starts simulation
+│
+├── core/
+│   ├── AutoScaler.go     # Contains the AutoScaler logic (scaling up/down)
+│   ├── Pubs&Subs.go       # Defines the publishers and subscribers logic
+│   └── workerpool.go     # Manages the service worker pools and handles events
+│
+├── events/
+│   ├── events.go         # Defines all Event structs (e.g., TripCreated, DriverMatched)
+│   ├── eventBus.go       # Event dispatching logic
+|
+├── services/
+│   ├── trip_service.go
+│   ├── driver_service.go
+│   ├── payment_service.go
+│   └── ... (etc.)
+│
+├── users.go # Logic to simulate users and publish events
+│
+└── notifications.log     # Example output log file
+```
 
 ---
 
@@ -46,6 +79,20 @@ GoRide operates as a **true concurrent system**, composed of **decoupled service
 
 * **Race Condition Prevention**
   Uses `sync.Mutex` to safely manage shared state, ensuring deterministic and error-free execution under high concurrency.
+  
+---
+
+## 🧩 **Simulation Output**
+
+When executed, the system logs all simulated events to a `notifications.log` file in the project root.
+You’ll see logs for trip requests, driver matches, payments, and shutdown sequences.
+
+![](https://github.com/Siuumanth/GoRide-EDA-Smulation/blob/main/images/2.png?raw=true)
+
+---
+
+### Console Output:
+![](https://github.com/Siuumanth/GoRide-EDA-Smulation/blob/main/images/3.png?raw=true)
 
 ---
 
@@ -65,20 +112,6 @@ go run main.go
 
 ```bash
 go run .
-```
-
----
-
-## 🧩 **Simulation Output**
-
-When executed, the system logs all simulated events to a `notifications.log` file in the project root.
-You’ll see logs for trip requests, driver matches, payments, and shutdown sequences.
-
-Example console output:
-
-```
-[AutoScaler] Scaling up: current load 724, current Count 9
-[AutoScaler] System idle, Triggering global shutdown.
 ```
 
 ---
