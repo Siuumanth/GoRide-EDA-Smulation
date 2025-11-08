@@ -44,7 +44,7 @@ goride/
 │   ├── events.go         # Defines all Event structs (e.g., TripCreated, DriverMatched)
 │   ├── eventBus.go       # Event dispatching logic
 |
-├── services/
+├── services/             # Defines independant services
 │   ├── trip_service.go
 │   ├── driver_service.go
 │   ├── payment_service.go
